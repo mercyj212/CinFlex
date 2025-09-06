@@ -4,6 +4,19 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <!-- Movie Info -->
+      <div v-if="movie" class="mb-4">
+        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+          {{ movie.title || movie.name }}
+        </h2>
+        
+        <p class="text-gray-700 dark:text-gray-300 text-sm line-clamp-4">
+           {{ movie.overview || "No description available." }}
+        </p>
+    
+
+      </div>
+
       <h2 class="text-2xl mb-4">Login</h2>
       <form @submit.prevent="handleLogin" class="space-y-4">
         <div class="mb-4">

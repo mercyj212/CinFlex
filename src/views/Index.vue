@@ -5,7 +5,7 @@
       <!-- Main carousel -->
       <Carousel
         ref="heroCarousel"
-        :autoplay="4000"
+        :autoplay="5000"
         :wrap-around="true"
         class="h-screen"
         @slide-end="onSlideEnd"
@@ -110,13 +110,14 @@
               :key="movie.id"
               class="w-[180px] h-[300px] sm:w-[200px] sm:h-[320px] lg:w-[220px] lg:h-[340px]
                  flex-shrink-0 movie-card rounded-lg overflow-hidden shadow hover:scale-105 transition cursor-pointer bg-black/40"
-              @click="handleMovieClick(movie)"
+              
             >
               <!-- Poster -->
               <img
               :src="movie.poster_path ? `https://image.tmdb.org/t/p/w300${movie.poster_path}` : fallbackImage"
               :alt="movie.title"
               class="w-full h-[80%] object-cover"
+              @click="handleMovieClick(movie)"
               />
 
               <!-- Title  -->
@@ -136,7 +137,7 @@
            @click="scrollRow('left')"
             class="absolute left-0 top-1/3 bg-black/60 text-white p-3 rounded-full hover:bg-black/80 transition"
             >
-            ◀
+                <ion-icon name="chevron-back-outline" size="large"></ion-icon>
             </button>
 
             <!-- Right Arrow -->
@@ -144,120 +145,124 @@
             @click="scrollRow('right')"
             class="absolute right-0 top-1/3 bg-black/60 text-white p-3 rounded-full hover:bg-black/80 transition"
             >
-            ▶
+                <ion-icon name="chevron-forward-outline" size="large"></ion-icon>
             </button>
         </div>
       </div>
     </section>
 
     <!-- Top Rated -->
-<section class="my-12">
-  <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
-    <h2 class="text-2xl font-bold text-white mb-4">Top Rated</h2>
-    <div class="flex overflow-x-auto scrollbar-hide gap-6">
-      <div
-        v-for="movie in topRated.slice(0, 10)"
-        :key="movie.id"
-        class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
-        @click="handleMovieClick(movie)"
-      >
-        <img
-          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
-          :alt="movie.title"
-          class="w-full h-64 object-cover"
-        />
+    <section class="my-12">
+      <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
+        <h2 class="text-2xl font-bold text-white mb-4">Top Rated</h2>
+        <div class="flex overflow-x-auto scrollbar-hide gap-6">
+          <div
+            v-for="movie in topRated.slice(0, 10)"
+            :key="movie.id"
+            class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            @click="handleMovieClick(movie)"
+          >
+            <img
+              :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
+              :alt="movie.title"
+              class="w-full h-64 object-cover"
+            />
 
-        <div class="p-2 h-[20%] flex flex-col justify-between">
+            <div class="p-2 h-[20%] flex flex-col justify-between">
                 <h3 class="font-bold text-sm sm:text-base truncate text-white">
                 {{ movie.title }}
                 </h3>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- Upcoming -->
-<section class="my-12">
-  <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
-    <h2 class="text-2xl font-bold text-white mb-4">Upcoming</h2>
-    <div class="flex overflow-x-auto scrollbar-hide gap-6">
-      <div
-        v-for="movie in upcoming.slice(0, 10)"
-        :key="movie.id"
-        class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
-        @click="handleMovieClick(movie)"
-      >
-        <img
-          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
-          :alt="movie.title"
-          class="w-full h-64 object-cover"
-        />
+    <!-- Upcoming -->
+    <section class="my-12">
+      <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
+        <h2 class="text-2xl font-bold text-white mb-4">Upcoming</h2>
+        <div class="flex overflow-x-auto scrollbar-hide gap-6">
+          <div
+            v-for="movie in upcoming.slice(0, 10)"
+            :key="movie.id"
+            class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            @click="handleMovieClick(movie)"
+          >
+           <img
+              :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
+              :alt="movie.title"
+              class="w-full h-64 object-cover"
+            />
 
-        <div class="p-2 h-[20%] flex flex-col justify-between">
-                <h3 class="font-bold text-sm sm:text-base truncate text-white">
+            <div class="p-2 h-[20%] flex flex-col justify-between">
+              <h3 class="font-bold text-sm sm:text-base truncate text-white">
                 {{ movie.title }}
-                </h3>
+              </h3>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- Action -->
-<section class="my-12">
-  <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
-    <h2 class="text-2xl font-bold text-white mb-4">Action Movies</h2>
-    <div class="flex overflow-x-auto scrollbar-hide gap-6">
-      <div
-        v-for="movie in actionMovies.slice(0, 10)"
-        :key="movie.id"
-        class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
-        @click="handleMovieClick(movie)"
-      >
-        <img
-          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
-          :alt="movie.title"
-          class="w-full h-64 object-cover"
-        />
+    <section class="my-12">
+      <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
+        <h2 class="text-2xl font-bold text-white mb-4">Action Movies</h2>
+        <div class="flex overflow-x-auto scrollbar-hide gap-6">
+          <div
+            v-for="movie in actionMovies.slice(0, 10)"
+            :key="movie.id"
+            class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            @click="handleMovieClick(movie)"
+          >
+            <img
+              :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
+              :alt="movie.title"
+              class="w-full h-64 object-cover"
+            />
 
-        <div class="p-2 h-[20%] flex flex-col justify-between">
-                <h3 class="font-bold text-sm sm:text-base truncate text-white">
+            <div class="p-2 h-[20%] flex flex-col justify-between">
+              <h3 class="font-bold text-sm sm:text-base truncate text-white">
                 {{ movie.title }}
-                </h3>
+              </h3>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
         <!-- Kdrama -->
-<section class="my-12">
-  <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
-    <h2 class="text-2xl font-bold text-white mb-4">Kdrama</h2>
-    <div class="flex overflow-x-auto scrollbar-hide gap-6">
-      <div
-        v-for="movie in kdrama.slice(0, 10)"
-        :key="movie.id"
-        class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
-        @click="handleMovieClick(movie)"
-      >
-        <img
-          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
-          :alt="movie.title"
-          class="w-full h-64 object-cover"
-        />
+    <section class="my-12">
+      <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
+        <h2 class="text-2xl font-bold text-white mb-4">Kdramas</h2>
+        <div class="flex overflow-x-auto scrollbar-hide gap-6">
+          <div
+            v-for="movie in kdrama.slice(0, 10)"
+            :key="movie.id"
+            class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            @click="handleMovieClick(movie)"
+          >
+            <img
+              :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
+              :alt="movie.title"
+              class="w-full h-64 object-cover"
+            />
 
-        <div class="p-2 h-[20%] flex flex-col justify-between">
-                <h3 class="font-bold text-sm sm:text-base truncate text-white">
+            <div class="p-2 h-[20%] flex flex-col justify-between">
+              <h3 class="font-bold text-sm sm:text-base truncate text-white">
                 {{ movie.name }}
-                </h3>
+              </h3>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
+    </section>
+    <LoginModal
+      :show="showLoginModal"
+      @login="showLoginModal = false; if (selectedMovie) handleMovieClick(selectedMovie);"
+      @close="showLoginModal = false; selectedMovie = null;"
+    />
   </div>
 </template>
 
@@ -268,10 +273,11 @@
   import { useAuthStore } from '@/stores/auth';
   import axios from 'axios';
   import NavbarHome from '@/components/NavbarHome.vue';
+  import LoginModal from '@/components/LoginModal.vue';
 
 
   export default {
-    components: { Carousel, Slide, NavbarHome },
+    components: { Carousel, Slide, NavbarHome, LoginModal },
       computed: {
         ...mapStores(useAuthStore),
       },
@@ -287,6 +293,8 @@
           apiKey: import.meta.env.VITE_TMDB_API_KEY,
           baseUrl: 'https://api.themoviedb.org/3',
           currentSlide: 0, 
+          showLoginModal: false,
+          selectMovie: null,
         };
       },
       methods: {
@@ -379,8 +387,10 @@
 
         handleMovieClick(movie) {
           if (!this.authStore.isLoggedIn) {
-            localStorage.setItem('redirectMessage', 'Please log in first before continuing.');
-            this.$router.push('/');
+            this.selectedMovie = movie;
+            this.showLoginModal = true;
+            // localStorage.setItem('redirectMessage', 'Please log in first before continuing.');
+            // this.$router.push('/');
           } else {
             this.$router.push({ path: '/movies', query: { movieId: movie.id } });
           }
@@ -415,10 +425,6 @@
 
 .hero { position: relative; }
 
-/* makes sure poster thumbnails don't stretch on very small screens
-@media (max-width: 640px) {
-  .hero .w-28 { width: 22vw; height: 12vw; }
-} */
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
