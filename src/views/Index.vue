@@ -95,7 +95,13 @@
     <section class="my-8">
       <!-- Trending Section -->
       <div class="mx-w-screen-2xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 xl:px-50">
-        <h2 class="text-2xl font-bold text-white mb-4">Trending</h2>
+
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-3xl font-extrabold text-red-600 uppercase tracking-wider">
+            Trending now
+          </h2>
+          <span class="text-sm text-gray-400">Drag to next</span>
+        </div>
 
         <!-- Scroll Row Wrapper -->
         <div class="relative">
@@ -152,20 +158,21 @@
     </section>
 
     <!-- Top Rated -->
-    <section class="my-12">
+    <section class="my-8">
       <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
         <h2 class="text-2xl font-bold text-white mb-4">Top Rated</h2>
         <div class="flex overflow-x-auto scrollbar-hide gap-6">
           <div
             v-for="movie in topRated.slice(0, 10)"
             :key="movie.id"
-            class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            class="w-[180px] h-[300px] sm:w-[200px] sm:h-[320px] lg:w-[220px] lg:h-[340px] 
+            flex-shrink-0 movie-card shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer bg-black/40"
             @click="handleMovieClick(movie)"
           >
             <img
               :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
               :alt="movie.title"
-              class="w-full h-64 object-cover"
+              class="w-full h-[80%] object-cover"
             />
 
             <div class="p-2 h-[20%] flex flex-col justify-between">
@@ -186,13 +193,14 @@
           <div
             v-for="movie in upcoming.slice(0, 10)"
             :key="movie.id"
-            class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            class="w-[180px] h-[300px] sm:w-[200px] sm:h-[320px] lg:w-[220px] lg:h-[340px]
+            flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
             @click="handleMovieClick(movie)"
           >
            <img
               :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
               :alt="movie.title"
-              class="w-full h-64 object-cover"
+              class="w-full h-[80%] object-cover"
             />
 
             <div class="p-2 h-[20%] flex flex-col justify-between">
@@ -213,13 +221,14 @@
           <div
             v-for="movie in actionMovies.slice(0, 10)"
             :key="movie.id"
-            class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            class="w-[180px] h-[300px] sm:w-[200px] sm:h-[320px] lg:w-[220px] lg:h-[340px]
+            flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
             @click="handleMovieClick(movie)"
           >
             <img
               :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
               :alt="movie.title"
-              class="w-full h-64 object-cover"
+              class="w-full h-[80%] object-cover"
             />
 
             <div class="p-2 h-[20%] flex flex-col justify-between">
@@ -240,13 +249,14 @@
           <div
             v-for="movie in kdrama.slice(0, 10)"
             :key="movie.id"
-            class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            class="w-[180px] h-[300px] sm:w-[200px] sm:h-[320px] lg:w-[220px] lg:h-[340px]
+            flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
             @click="handleMovieClick(movie)"
           >
             <img
               :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
               :alt="movie.title"
-              class="w-full h-64 object-cover"
+              class="w-full h-[80%] object-cover"
             />
 
             <div class="p-2 h-[20%] flex flex-col justify-between">
@@ -294,7 +304,7 @@
           baseUrl: 'https://api.themoviedb.org/3',
           currentSlide: 0, 
           showLoginModal: false,
-          selectMovie: null,
+          selectedMovie: null,
         };
       },
       methods: {
@@ -419,6 +429,10 @@
 </script>
 
 <style scoped>
+body {
+  background-color: black;
+}
+
 .home-container {
   background: transparent;
 }
