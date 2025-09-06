@@ -93,7 +93,8 @@
 
     <!-- Movie Grid Section -->
     <section class="my-8">
-      <div class="container mx-auto px-4">
+      <!-- Trending Section -->
+      <div class="mx-w-screen-2xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 xl:px-50">
         <h2 class="text-2xl font-bold text-white mb-4">Trending</h2>
 
         <!-- Scroll Row Wrapper -->
@@ -118,14 +119,14 @@
               class="w-full h-[80%] object-cover"
               />
 
-              <!-- Title + Rating -->
+              <!-- Title  -->
               <div class="p-2 h-[20%] flex flex-col justify-between">
                 <h3 class="font-bold text-sm sm:text-base truncate text-white">
                 {{ movie.title }}
                 </h3>
-                <p class="text-gray-300 text-xs sm:text-sm">
+                <!-- <p class="text-gray-300 text-xs sm:text-sm">
                   ⭐ {{ movie.vote_average }} / 10
-                </p>
+                </p> -->
               </div>
             </div>
           </div>
@@ -149,16 +150,125 @@
       </div>
     </section>
 
+    <!-- Top Rated -->
+<section class="my-12">
+  <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
+    <h2 class="text-2xl font-bold text-white mb-4">Top Rated</h2>
+    <div class="flex overflow-x-auto scrollbar-hide gap-6">
+      <div
+        v-for="movie in topRated.slice(0, 10)"
+        :key="movie.id"
+        class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+        @click="handleMovieClick(movie)"
+      >
+        <img
+          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
+          :alt="movie.title"
+          class="w-full h-64 object-cover"
+        />
+
+        <div class="p-2 h-[20%] flex flex-col justify-between">
+                <h3 class="font-bold text-sm sm:text-base truncate text-white">
+                {{ movie.title }}
+                </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Upcoming -->
+<section class="my-12">
+  <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
+    <h2 class="text-2xl font-bold text-white mb-4">Upcoming</h2>
+    <div class="flex overflow-x-auto scrollbar-hide gap-6">
+      <div
+        v-for="movie in upcoming.slice(0, 10)"
+        :key="movie.id"
+        class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+        @click="handleMovieClick(movie)"
+      >
+        <img
+          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
+          :alt="movie.title"
+          class="w-full h-64 object-cover"
+        />
+
+        <div class="p-2 h-[20%] flex flex-col justify-between">
+                <h3 class="font-bold text-sm sm:text-base truncate text-white">
+                {{ movie.title }}
+                </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- Action -->
+<section class="my-12">
+  <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
+    <h2 class="text-2xl font-bold text-white mb-4">Action Movies</h2>
+    <div class="flex overflow-x-auto scrollbar-hide gap-6">
+      <div
+        v-for="movie in actionMovies.slice(0, 10)"
+        :key="movie.id"
+        class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+        @click="handleMovieClick(movie)"
+      >
+        <img
+          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
+          :alt="movie.title"
+          class="w-full h-64 object-cover"
+        />
+
+        <div class="p-2 h-[20%] flex flex-col justify-between">
+                <h3 class="font-bold text-sm sm:text-base truncate text-white">
+                {{ movie.title }}
+                </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <!-- Kdrama -->
+<section class="my-12">
+  <div class="max-w-screen-2xl mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-24">
+    <h2 class="text-2xl font-bold text-white mb-4">Kdrama</h2>
+    <div class="flex overflow-x-auto scrollbar-hide gap-6">
+      <div
+        v-for="movie in kdrama.slice(0, 10)"
+        :key="movie.id"
+        class="min-w-[180px] md:min-w-[200px] lg:min-w-[220px] flex-shrink-0 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+        @click="handleMovieClick(movie)"
+      >
+        <img
+          :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : fallbackImage"
+          :alt="movie.title"
+          class="w-full h-64 object-cover"
+        />
+
+        <div class="p-2 h-[20%] flex flex-col justify-between">
+                <h3 class="font-bold text-sm sm:text-base truncate text-white">
+                {{ movie.name }}
+                </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
   </div>
 </template>
 
 <script>
-  import "vue3-carousel/dist/carousel.css";
   import { Carousel, Slide } from "vue3-carousel";
+  import "vue3-carousel/dist/carousel.css";
   import { mapStores } from 'pinia';
   import { useAuthStore } from '@/stores/auth';
   import axios from 'axios';
   import NavbarHome from '@/components/NavbarHome.vue';
+
 
   export default {
     components: { Carousel, Slide, NavbarHome },
@@ -169,10 +279,14 @@
         return {
           carouselMovies: [],
           movies: [],
+          topRated: [],
+          upcoming: [],
+          actionMovies: [],
+          kdrama: [],
           fallbackImage: 'https://via.placeholder.com/200x300?text=No+Image',
           apiKey: import.meta.env.VITE_TMDB_API_KEY,
           baseUrl: 'https://api.themoviedb.org/3',
-          currentSlide: 0, // tracks which slide is active (used to highlight thumbnail)
+          currentSlide: 0, 
         };
       },
       methods: {
@@ -194,6 +308,46 @@
             this.movies = response.data.results;
           } catch (error) {
             console.error('Error fetching movies:', error);
+          }
+        },
+        async fetchTopRated() {
+          try {
+            const response = await axios.get(`${this.baseUrl}/movie/top_rated`, {
+              params: { api_key: this.apiKey, language: 'en-US', page: 1 },
+            });
+            this.topRated = response.data.results;
+          } catch (error) {
+            console.error('Error fetching top rated movies:', error);
+          }
+        },
+        async fetchUpcoming() {
+          try {
+            const response = await axios.get(`${this.baseUrl}/movie/upcoming`, {
+              params: { api_key: this.apiKey, language: 'en-US', page: 1 },
+            });
+            this.upcoming = response.data.results;
+          } catch (error) {
+            console.error('Error fetching upcoming movies:', error);
+          }
+        },
+        async fetchActionMovies() {
+          try {
+            const response = await axios.get(`${this.baseUrl}/discover/movie`, {
+              params: { api_key: this.apiKey, with_genres: 28, language: 'en-US', page: 1 },
+            });
+            this.actionMovies = response.data.results;
+          } catch (error) {
+            console.error('Error fetching action movies:', error);
+          }
+        },
+        async fetchKdrama() {
+          try {
+            const response = await axios.get(`${this.baseUrl}/discover/tv`, {
+              params: { api_key: this.apiKey, with_genres: 18, with_original_language: 'ko', language: 'en-US', page: 1 },
+            });
+            this.kdrama = response.data.results;
+          } catch (error) {
+            console.error('Error fetching Kdrama:', error);
           }
         },
 
@@ -246,6 +400,10 @@
       created() {
         this.fetchCarouselMovies();
         this.fetchMovies();
+        this.fetchTopRated();
+        this.fetchUpcoming();
+        this.fetchActionMovies();
+        this.fetchKdrama();
       },
     };
 </script>
@@ -257,10 +415,10 @@
 
 .hero { position: relative; }
 
-/* make sure poster thumbnails don't stretch on very small screens */
+/* makes sure poster thumbnails don't stretch on very small screens
 @media (max-width: 640px) {
   .hero .w-28 { width: 22vw; height: 12vw; }
-}
+} */
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
