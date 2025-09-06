@@ -27,7 +27,7 @@
     <button
       v-else
       @click="showModal = true"
-      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mr-50 cursor-pointer"
+      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded  cursor-pointer"
     >
       Login
     </button>

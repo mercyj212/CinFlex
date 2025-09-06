@@ -11,55 +11,58 @@
         @slide-end="onSlideEnd"
       >
         <Slide v-for="(movie, index) in carouselMovies" :key="movie.id ?? index">
-          <div class="relative w-full h-screen overflow-hidden">
+          <div class="relative w-full h-screen flex items-center justify-center">
             <!-- Background image (blurred and darkened) -->
             <img
               :src="movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : fallbackImage"
               :alt="movie.title"
-              class="absolute inset-0 w-full h-full object-cover filter blur- scale-105"
+              class="absolute inset-0 w-full h-full object-cover filter blur-lg scale-105"
             />
 
-           <!-- Foreground content
-            <div class="relative z-10 flex flex-col items-center justify-center text-center min-h-screen px-4">
+            <div class="absolute inset-0 bg-black/60"></div>
+
+           <!-- Foreground content -->
+            <div class="relative z-10 w-11/12 md:w-4/5 lg:w-3/4 aspect-video  bg-black/40 rounded-2xl overflow-hidden shadow-2xl ">
                 <img
-                :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : fallbackImage"
+                :src="movie.poster_path ? `https://image.tmdb.org/t/p/w780${movie.poster_path}` : fallbackImage"
                 :alt="movie.title"
-                class="w-5/6 md:w-3/4 lg:w-2/3 h-80 md:h-80 object-cover rounded-xl shadow-2xl mb-6"
+                class="w-full h-full object-cover cursor-pointer"
+                style="object-position: 50% 30%;"
                 @click="handleMovieClick(movie)"
                 />
-            </div> -->
+             
 
 
-            <!-- Left-to-right gradient to keep text readable -->
-            <div class="absolute inset-0 bg-gradient-to-r from-black/100 via-black/60 to-transparent pointer-events-none"></div>
+              <!-- Gradient overlay -->
+              <div class="absolute inset-0 bg-gradient-to-r from-black/100 via-black/60 to-transparent pointer-events-none"></div>
 
-            <!--  Left content box (title, description, CTA) aligned to left like your screenshot -->
-            <div class="relative z-20 h-full flex items-center">
-              <div class="px-10 lg:px-16 max-w-xl text-left text-white">
-                <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 drop-shadow-lg">
+              
+              <div class="absolute top-1/3 left-10 max-w-lg">
+                
+                  <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 drop-shadow-lg">
                   {{ movie.title }}
-                </h1>
+                  </h1>
 
-                <p class="text-base md:text-lg text-gray-200 mb-5 line-clamp-3">
+                  <p class="text-base md:text-lg text-gray-200 mb-5 line-clamp-3">
                   {{ movie.overview || "No description available." }}
-                </p>
+                  </p>
 
-                <div class="flex items-center gap-4">
-                  <button
-                    @click="handleMovieClick(movie)"
-                    class="flex items-center gap-3 px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 transition-shadow"
-                  >
-                    <!-- small SVG play icon -->
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <div class="flex items-center gap-4">
+                    <button
+                      @click="handleMovieClick(movie)"
+                      class="flex items-center gap-3 px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 transition-shadow"
+                    >
+                      <!-- small SVG play icon -->
+                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M5 3v18l15-9L5 3z" fill="#fff"></path>
-                    </svg>
-                    <span class="font-medium">Watch Trailer</span>
-                  </button>
+                      </svg>
+                      <span class="font-medium">Watch Trailer</span>
+                    </button>
 
-                  <button class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition">
-                    More info
-                  </button>
-                </div>
+                    <button class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition">
+                      More info
+                    </button>
+                  </div>
               </div>
             </div>
           </div>
@@ -84,26 +87,9 @@
           ›
         </button>
       </div>
-
-      <!-- Thumbnail row (small posters) centered at bottom -->
-      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-40 flex items-center gap-4">
-        <div
-          v-for="(movie, i) in carouselMovies"
-          :key="movie.id ?? i"
-          @click="goToSlide(i)"
-          class="w-28 md:w-20 h-16  overflow-hidden rounded-md cursor-pointer border-2 transition-shadow"
-          :class="i === currentSlide ? 'ring-2 ring-white scale-105' : 'ring-0 opacity-80 hover:opacity-100'"
-        >
-          <img
-            :src="movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : (movie.backdrop_path ? `https://image.tmdb.org/t/p/w300${movie.backdrop_path}` : fallbackImage)"
-            :alt="movie.title"
-            class="w-full h-full object-cover"
-          />
-        </div>
-      </div>
     </section>
 
-    <!-- Movie Grid Section (unchanged) -->
+    <!-- Movie Grid Section -->
     <section class="my-8 px-4">
       <h2 class="text-2xl font-bold text-white mb-4">Now Playing</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
@@ -157,7 +143,7 @@ export default {
         const response = await axios.get(`${this.baseUrl}/movie/popular`, {
           params: { api_key: this.apiKey, language: 'en-US', page: 1 },
         });
-        this.carouselMovies = response.data.results.slice(0, 5);
+        this.carouselMovies = response.data.results.slice(0, 10);
       } catch (error) {
         console.error('Error fetching carousel movies:', error);
       }
