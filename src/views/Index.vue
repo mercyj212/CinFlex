@@ -1,8 +1,8 @@
 <template>
   <div class="home-container">
-    <!-- HERO / Carousel -->
+    <!-- Hero Section-->
     <section class="hero relative min-h-screen overflow-hidden">
-      <!-- Main carousel -->
+      <!-- Carousel -->
       <Carousel
         ref="heroCarousel"
         :autoplay="5000"
@@ -282,14 +282,17 @@
   import { mapStores } from 'pinia';
   import { useAuthStore } from '@/stores/auth';
   import axios from 'axios';
-  import NavbarHome from '@/components/NavbarHome.vue';
   import LoginModal from '@/components/LoginModal.vue';
 
 
   export default {
-    components: { Carousel, Slide, NavbarHome, LoginModal },
+    components: { 
+      Carousel, 
+      Slide,  
+      LoginModal 
+    },
       computed: {
-        ...mapStores(useAuthStore),
+         ...mapStores(useAuthStore),
       },
       data() {
         return {
@@ -429,23 +432,25 @@
 </script>
 
 <style>
-body {
-  background-color: black;
-}
+  body {
+    background-color: black;
+  }
 
-.home-container {
-  background: transparent;
-}
+  .home-container {
+    background: transparent;
+  }
 
-.hero { position: relative; }
+  .hero {
+    position: relative; 
+    }
 
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;  
-  scrollbar-width: none;  
-}
+  .scrollbar-hide {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+  }
 </style>

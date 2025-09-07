@@ -10,6 +10,9 @@
     <div v-if="message" class="bg-red-500 text-white p-3 text-center">
       {{ message }}
     </div>
+
+    <TrailerModal />
+
     <router-view />
   </div>
 </template>
@@ -18,10 +21,13 @@
 import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 import NavbarHome from '@/components/NavbarHome.vue';
+import TrailerModal from './components/TrailerModal.vue';
 
 export default {
   components: {
+    
     NavbarHome,
+    TrailerModal,
   },
   computed: {
     ...mapStores(useAuthStore),

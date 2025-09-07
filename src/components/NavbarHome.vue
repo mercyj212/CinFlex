@@ -3,23 +3,32 @@
     <!-- Logo -->
     <div class="flex items-center h-16 w-32  p-4">
       <img src="../assets/cf-red2.png" alt="Logo"/>
-      <!-- <p>CinFlex</p>  -->
     </div>
+    
     <!-- Links (show only if logged in) -->
     <div v-if="isLoggedIn">
-      <ul class="flex space-x-6">
-        <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/movies">Movies</router-link></li>
-        <li><router-link to="/tv-shows">TV Shows</router-link></li>
-        <li><router-link to="/my-list">My List</router-link></li>
+      <ul class="flex space-x-6 text-white ">
         <li>
+          <router-link to="/" class="px-4 py-2 rounded-lg hover:bg-red-700">Home</router-link>
+        </li>
+        <li>
+          <router-link to="/movies" class="px-4 py-2 rounded-lg hover:bg-red-700">Movies</router-link>
+        </li>
+        <li>
+          <router-link to="/tv-shows" class="px-4 py-2 rounded-lg hover:bg-red-700">TV Shows</router-link>
+        </li>
+        <li>
+          <router-link to="/my-list" class="px-4 py-2 rounded-lg hover:bg-red-700">My List</router-link>
+        </li>
+
+        
           <button
             @click="$emit('logout')"
-            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            class="bg-re hover:bg-red-700 text-white px-4 py-2 rounded-lg "
           >
             Logout
           </button>
-        </li>
+        
       </ul>
     </div>
 
