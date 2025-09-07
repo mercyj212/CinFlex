@@ -9,8 +9,8 @@
         class="h-screen"
         @slide-end="onSlideEnd"
       >
-        <Slide 
-          v-for="(movie, index) in carouselMovies" 
+        <Slide
+          v-for="(movie, index) in carouselMovies"
           :key="movie.uid ?? index"
         >
           <div class="relative w-full h-screen flex items-center justify-center">
@@ -88,48 +88,90 @@
       </div>
     </section>
 
-    <!-- Popular Movies Grid -->
-    <div class="p-6">
-      <h1 class="text-3xl font-bold mb-6">🎬 Popular Movies</h1>
+    <!-- Latest Release -->
+    <section class="p-6">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4 text-red-600">LATEST RELEASE</h2>
       <div v-if="loading">Loading movies...</div>
       <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
         <div
-          v-for="movie in movies"
+          v-for="movie in latestMovies"
           :key="movie.id"
-          class="relative bg-white shadow rounded-lg overflow-hidden hover:scale-105 transition"
+          class="relative bg-white/5 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+          @click="openInfo(normalizeMovie(movie))"
         >
           <img
             :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : fallbackImage"
-            alt="Movie Poster"
+            :alt="movie.title"
             class="w-full h-72 object-cover"
           />
+        </div>
+      </div>
+    </section>
 
-          <!-- Dark overlay with short description and buttons -->
-          <div class="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-3">
-            <h3 class="font-bold text-sm truncate">{{ movie.title }}</h3>
-            <p class="text-xs text-gray-200 line-clamp-2">{{ movie.overview }}</p>
-
-            <div class="mt-2 flex gap-2">
-              <button
-                @click.stop="openTrailer(movie.id, 'movie')"
-                class="bg-red-600 px-3 py-1 rounded text-xs hover:bg-red-700"
-              >
-                ▶ Watch Trailer
-              </button>
-
-              <button
-                @click.stop="openInfo(normalizeMovie(movie))"
-                class="bg-white/10 px-3 py-1 rounded text-xs hover:bg-white/20"
-              >
-                ℹ More info
-              </button>
-            </div>
+    <!-- Top Trending -->
+    <section class="p-6">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4 text-red-600">TOP TRENDING</h2>
+      <div v-if="loading">Loading movies...</div>
+      <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div
+          v-for="(movie, index) in trendingMovies"
+          :key="movie.id"
+          class="relative bg-white/5 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+          @click="openInfo(normalizeMovie(movie))"
+        >
+          <img
+            :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : fallbackImage"
+            :alt="movie.title"
+            class="w-full h-72 object-cover"
+          />
+          <!-- Trending Number Overlay -->
+          <div class="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded-md text-sm font-bold">
+            {{ index + 1 }}
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Trailer Modal (standalone) -->
+    <!-- Select Genre -->
+    <section class="p-6">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4 text-red-600">SELECT GENRE</h2>
+      <!-- Genre buttons -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div
+          v-for="genre in genres"
+          :key="genre"
+          class="flex items-center justify-center h-32 text-white font-bold text-xl rounded-lg cursor-pointer hover:opacity-80 transition"
+          :class="genreColors[genre]"
+          @click="() => { selectedGenre = genre; fetchMoviesByGenre(genreMap[genre]); }"
+        >
+          {{ genre }}
+        </div>
+      </div>
+
+      <!-- Genre movies grid -->
+      <div v-if="selectedGenre" class="mt-4">
+        <h3 class="text-xl font-semibold mb-4 text-white">
+          {{ selectedGenre }} Movies
+        </h3>
+        <div v-if="genreMovies.length === 0" class="text-gray-400">No movies found.</div>
+        <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div
+            v-for="movie in genreMovies"
+            :key="movie.id"
+            class="relative bg-white/5 shadow rounded-lg overflow-hidden hover:scale-105 transition cursor-pointer"
+            @click="openInfo(normalizeMovie(movie))"
+          >
+            <img
+              :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : fallbackImage"
+              :alt="movie.title"
+              class="w-full h-72 object-cover"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trailer Modal -->
     <TrailerModal
       v-if="showTrailer"
       ref="trailerModal"
@@ -139,7 +181,7 @@
       @close="closeTrailer"
     />
 
-    <!-- Info Modal (full details + inlined trailer) -->
+    <!-- Info Modal -->
     <InfoModal
       v-if="showInfo"
       :movieId="selectedMovie?.original_id"
@@ -163,9 +205,27 @@ export default {
 
   data() {
     return {
-      movies: [], // raw popular movies for grid
-      carouselMovies: [], // normalized combination of movies + kdramas
-      selectedMovie: null, // { original_id, content_type, ... } or null
+      movies: [],
+      latestMovies: [],
+      trendingMovies: [],
+      genres: ["Romantic", "Thriller", "Comedy", "Adventure"],
+      genreColors: {
+        Romantic: "bg-red-600",
+        Thriller: "bg-purple-600",
+        Comedy: "bg-teal-500",
+        Adventure: "bg-yellow-500",
+      },
+      genreMap: {
+        Romantic: 10749, // Romance
+        Thriller: 53,
+        Comedy: 35,
+        Adventure: 12,
+      },
+      genreMovies: [],
+      selectedGenre: null,
+
+      carouselMovies: [],
+      selectedMovie: null,
       showTrailer: false,
       showInfo: false,
       loading: true,
@@ -177,13 +237,11 @@ export default {
   },
 
   methods: {
-    // fetch for grid
     async fetchPopularMovies() {
       try {
         const res = await axios.get(`${this.baseUrl}/movie/popular`, {
           params: { api_key: this.apiKey, language: "en-US", page: 1 },
         });
-        // raw list (for grid)
         this.movies = res.data.results || [];
         return res.data.results || [];
       } catch (err) {
@@ -192,7 +250,6 @@ export default {
       }
     },
 
-    // fetch Kdrama tv shows
     async fetchKdrama() {
       try {
         const res = await axios.get(`${this.baseUrl}/discover/tv`, {
@@ -207,6 +264,23 @@ export default {
       } catch (err) {
         console.error("Error fetching Kdrama:", err);
         return [];
+      }
+    },
+
+    async fetchMoviesByGenre(genreId) {
+      try {
+        const res = await axios.get(`${this.baseUrl}/discover/movie`, {
+          params: {
+            api_key: this.apiKey,
+            with_genres: genreId,
+            language: "en-US",
+            page: 1,
+          },
+        });
+        this.genreMovies = res.data.results || [];
+      } catch (err) {
+        console.error("Error fetching genre movies:", err);
+        this.genreMovies = [];
       }
     },
 
@@ -254,6 +328,10 @@ export default {
       const normalizedTv = (kdrama || []).map(this.normalizeTv);
       const combined = this.shuffleArray(normalizedMovies.concat(normalizedTv));
       this.carouselMovies = combined.slice(0, 10);
+
+      // also set Latest + Trending
+      this.latestMovies = popular.slice(0, 5);
+      this.trendingMovies = popular.slice(5, 10);
     },
 
     onSlideEnd(payload) {
@@ -269,25 +347,19 @@ export default {
       this.$refs.heroCarousel?.next();
     },
 
-    // open the standalone trailer popup
     openTrailer(movieId, type = "movie") {
       this.selectedMovie = { original_id: movieId, content_type: type };
       this.showTrailer = true;
     },
 
-    // open info modal
     openInfo(movie) {
-      // movie is expected to be normalized (from carousel) or normalized via normalizeMovie(movie)
       this.selectedMovie = movie;
       this.showInfo = true;
     },
 
-    // Called when InfoModal emits playTrailer (user pressed play inside info)
     playTrailerFromInfo(movieId, mediaType = "movie") {
       this.selectedMovie = { original_id: movieId, content_type: mediaType };
-      // close the info modal and open trailer
       this.showInfo = false;
-      // small delay to ensure InfoModal unmounts before TrailerModal mounts (avoids focus/scroll clashes)
       this.$nextTick(() => {
         this.showTrailer = true;
       });
@@ -300,7 +372,6 @@ export default {
 
     closeInfo() {
       this.showInfo = false;
-      // keep selectedMovie if you want (optional)
     },
   },
 
@@ -310,7 +381,6 @@ export default {
   },
 
   watch: {
-    // lock background scroll when either modal is open
     showInfo(val) {
       document.body.style.overflow = val || this.showTrailer ? "hidden" : "";
     },
@@ -328,8 +398,6 @@ export default {
 .hero {
   position: relative;
 }
-
-/* helper - hide scrollbar for cast list */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

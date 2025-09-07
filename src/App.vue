@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-black/100 text-white">
     <NavbarHome 
-    
-       :is-logged-in="authStore.isLoggedIn"
-       @login="handleLogin"
-       @logout="handleLogout"
+      :is-logged-in="authStore.isLoggedIn"
+      @login="handleLogin"
+      @logout="handleLogout"
+      @select="openInfoModal"
     />
 
     <div v-if="message" class="bg-red-500 text-white p-3 text-center">
@@ -13,7 +13,14 @@
 
     <TrailerModal />
 
-    <InfoModal />
+    
+    <InfoModal
+      v-if="showInfo"
+      :movieId="selectedMovie?.id"
+      :type="selectedMovie?.media_type || 'movie'"
+      :isOpen="showInfo"
+      @close="closeInfoModal"
+    />
 
     <router-view />
   </div>
@@ -28,7 +35,6 @@ import InfoModal from './components/InfoModal.vue';
 
 export default {
   components: {
-
     NavbarHome,
     TrailerModal,
     InfoModal,
@@ -42,17 +48,17 @@ export default {
   data() {
     return {
       message: '',
+      selectedMovie: null,  // ✅ holds clicked movie
+      showInfo: false       // ✅ controls modal visibility
     };
   },
   watch: {
-    '$route.path'(newPath) {
+    '$route.path'() {
       const msg = localStorage.getItem('redirectMessage');
       if (msg) {
         this.message = msg;
         localStorage.removeItem('redirectMessage');
-        setTimeout(() => {
-          this.message = '';
-        }, 3000);
+        setTimeout(() => (this.message = ''), 3000);
       }
     },
   },
@@ -65,6 +71,16 @@ export default {
       this.authStore.logout();
       this.$router.push('/');
     },
+    // ✅ Called when Navbar/search emits @select
+    openInfoModal(item) {
+      console.log("Movie clicked:", item);
+      this.selectedMovie = item;
+      this.showInfo = true;
+    },
+    closeInfoModal() {
+      this.showInfo = false;
+      this.selectedMovie = null;
+    }
   },
 };
 </script>
