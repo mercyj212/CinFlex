@@ -9,7 +9,10 @@
         class="h-screen"
         @slide-end="onSlideEnd"
       >
-        <Slide v-for="(movie, index) in carouselMovies" :key="movie.uid ?? index">
+        <Slide 
+          v-for="(movie, index) in carouselMovies" 
+          :key="movie.uid ?? index"
+        >
           <div class="relative w-full h-screen flex items-center justify-center">
             <!-- Background -->
             <img
@@ -56,7 +59,9 @@
                     <span class="font-medium">Watch Trailer</span>
                   </button>
 
-                  <button class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20">
+                  <button
+                    @click="openInfo(movie)"
+                    class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20">
                     More info
                   </button>
                 </div>
@@ -91,28 +96,57 @@
         <div
           v-for="movie in movies"
           :key="movie.id"
-          class="bg-white shadow rounded-lg overflow-hidden hover:scale-105 transition"
+          class="relative bg-white shadow rounded-lg overflow-hidden hover:scale-105 transition"
         >
           <img
             :src="movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : fallbackImage"
             alt="Movie Poster"
             class="w-full h-72 object-cover"
           />
-          <div class="p-4">
-            <h2 class="font-bold text-lg truncate">{{ movie.title }}</h2>
-            <p class="text-gray-600 text-sm">⭐ {{ movie.vote_average }} / 10</p>
+
+          <!-- Dark overlay with short description and buttons -->
+          <div class="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-3">
+            <h3 class="font-bold text-sm truncate">{{ movie.title }}</h3>
+            <p class="text-xs text-gray-200 line-clamp-2">{{ movie.overview }}</p>
+
+            <div class="mt-2 flex gap-2">
+              <button
+                @click.stop="openTrailer(movie.id, 'movie')"
+                class="bg-red-600 px-3 py-1 rounded text-xs hover:bg-red-700"
+              >
+                ▶ Watch Trailer
+              </button>
+
+              <button
+                @click.stop="openInfo(normalizeMovie(movie))"
+                class="bg-white/10 px-3 py-1 rounded text-xs hover:bg-white/20"
+              >
+                ℹ More info
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Trailer Modal -->
+    <!-- Trailer Modal (standalone) -->
     <TrailerModal
-      v-if="selectedMovieId"
-      :movieId="selectedMovieId"
-      :mediaType="selectedMediaType"
-      :isOpen="isTrailerOpen"
-      @close="isTrailerOpen = false"
+      v-if="showTrailer"
+      ref="trailerModal"
+      :movieId="selectedMovie?.original_id"
+      :mediaType="selectedMovie?.content_type || 'movie'"
+      :isOpen="showTrailer"
+      @close="closeTrailer"
+    />
+
+    <!-- Info Modal (full details + inlined trailer) -->
+    <InfoModal
+      v-if="showInfo"
+      :movieId="selectedMovie?.original_id"
+      :type="selectedMovie?.content_type || 'movie'"
+      :isOpen="showInfo"
+      @close="closeInfo"
+      @playTrailer="playTrailerFromInfo"
     />
   </div>
 </template>
@@ -121,18 +155,19 @@
 import { Carousel, Slide } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 import TrailerModal from "../components/TrailerModal.vue";
+import InfoModal from "../components/InfoModal.vue";
 import axios from "axios";
 
 export default {
-  components: { Carousel, Slide, TrailerModal },
+  components: { Carousel, Slide, TrailerModal, InfoModal },
 
   data() {
     return {
-      movies: [], // popular movies grid
-      carouselMovies: [], // hero section (mix of movies + kdramas)
-      selectedMovieId: null,
-      selectedMediaType: null,
-      isTrailerOpen: false,
+      movies: [], // raw popular movies for grid
+      carouselMovies: [], // normalized combination of movies + kdramas
+      selectedMovie: null, // { original_id, content_type, ... } or null
+      showTrailer: false,
+      showInfo: false,
       loading: true,
       fallbackImage: "https://via.placeholder.com/200x300?text=No+Image",
       apiKey: import.meta.env.VITE_TMDB_API_KEY,
@@ -142,11 +177,13 @@ export default {
   },
 
   methods: {
+    // fetch for grid
     async fetchPopularMovies() {
       try {
         const res = await axios.get(`${this.baseUrl}/movie/popular`, {
           params: { api_key: this.apiKey, language: "en-US", page: 1 },
         });
+        // raw list (for grid)
         this.movies = res.data.results || [];
         return res.data.results || [];
       } catch (err) {
@@ -155,6 +192,7 @@ export default {
       }
     },
 
+    // fetch Kdrama tv shows
     async fetchKdrama() {
       try {
         const res = await axios.get(`${this.baseUrl}/discover/tv`, {
@@ -231,16 +269,54 @@ export default {
       this.$refs.heroCarousel?.next();
     },
 
-    openTrailer(id, type) {
-      this.selectedMovieId = id;
-      this.selectedMediaType = type;
-      this.isTrailerOpen = true;
+    // open the standalone trailer popup
+    openTrailer(movieId, type = "movie") {
+      this.selectedMovie = { original_id: movieId, content_type: type };
+      this.showTrailer = true;
+    },
+
+    // open info modal
+    openInfo(movie) {
+      // movie is expected to be normalized (from carousel) or normalized via normalizeMovie(movie)
+      this.selectedMovie = movie;
+      this.showInfo = true;
+    },
+
+    // Called when InfoModal emits playTrailer (user pressed play inside info)
+    playTrailerFromInfo(movieId, mediaType = "movie") {
+      this.selectedMovie = { original_id: movieId, content_type: mediaType };
+      // close the info modal and open trailer
+      this.showInfo = false;
+      // small delay to ensure InfoModal unmounts before TrailerModal mounts (avoids focus/scroll clashes)
+      this.$nextTick(() => {
+        this.showTrailer = true;
+      });
+    },
+
+    closeTrailer() {
+      this.showTrailer = false;
+      this.selectedMovie = null;
+    },
+
+    closeInfo() {
+      this.showInfo = false;
+      // keep selectedMovie if you want (optional)
     },
   },
 
   async created() {
     await this.buildCarousel();
     this.loading = false;
+  },
+
+  watch: {
+    // lock background scroll when either modal is open
+    showInfo(val) {
+      document.body.style.overflow = val || this.showTrailer ? "hidden" : "";
+    },
+    showTrailer(val) {
+      document.body.style.overflow = val || this.showInfo ? "hidden" : "";
+    },
   },
 };
 </script>
@@ -251,5 +327,14 @@ export default {
 }
 .hero {
   position: relative;
+}
+
+/* helper - hide scrollbar for cast list */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>

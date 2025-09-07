@@ -13,6 +13,8 @@
 
     <TrailerModal />
 
+    <InfoModal />
+
     <router-view />
   </div>
 </template>
@@ -22,12 +24,14 @@ import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 import NavbarHome from '@/components/NavbarHome.vue';
 import TrailerModal from './components/TrailerModal.vue';
+import InfoModal from './components/InfoModal.vue';
 
 export default {
   components: {
-    
+
     NavbarHome,
     TrailerModal,
+    InfoModal,
   },
   computed: {
     ...mapStores(useAuthStore),

@@ -57,10 +57,20 @@ export default {
     };
   },
   watch: {
-    isOpen(newVal) {
-      if (newVal) {
+    isOpen: {
+        immediate: true,
+      handler(newVal) {
+        if(newVal) {
         this.fetchTrailer();
+      }else {
+        this.trailerKey = null;
       }
+    },
+    },
+    movieId(newVal) {
+        if(this.isOpen &&  newVal) {
+            this.fetchTrailer();
+        }
     },
   },
   methods: {

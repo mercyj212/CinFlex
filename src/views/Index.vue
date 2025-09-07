@@ -268,6 +268,7 @@
         </div>
       </div>
     </section>
+    
     <LoginModal
       :show="showLoginModal"
       @login="showLoginModal = false; if (selectedMovie) handleMovieClick(selectedMovie);"
