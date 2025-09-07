@@ -115,7 +115,7 @@
               v-for="movie in movies.slice(0, 10)"
               :key="movie.id"
               class="w-[180px] h-[300px] sm:w-[200px] sm:h-[320px] lg:w-[220px] lg:h-[340px]
-                 flex-shrink-0 movie-card rounded-lg overflow-hidden shadow hover:scale-105 transition cursor-pointer bg-black/40"
+                 flex-shrink-0 movie-card rounded-lg overflow-hidden shadow hover:scale-105 transition cursor-pointer bg-black/40 "
               
             >
               <!-- Poster -->
@@ -428,7 +428,7 @@
     };
 </script>
 
-<style scoped>
+<style>
 body {
   background-color: black;
 }
