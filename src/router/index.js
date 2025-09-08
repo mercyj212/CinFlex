@@ -28,7 +28,7 @@ const routes = [
     },
 
     {
-        path: '/tvshows',
+        path: '/tv-shows',
         name: 'TvShows',
         component: TvShows,
         meta: { requiresAuth: true }
